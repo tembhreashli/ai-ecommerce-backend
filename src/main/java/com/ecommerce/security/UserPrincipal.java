@@ -1,5 +1,6 @@
 package com.ecommerce.security;
 
+import com.ecommerce.model.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -52,6 +53,21 @@ public class UserPrincipal implements UserDetails {
         this.username = username;
         this.email = email;
         this.password = password;
+    }
+
+    /**
+     * Factory method to create UserPrincipal from User entity
+     */
+    public static UserPrincipal create(User user) {
+        UserPrincipal userPrincipal = new UserPrincipal(
+            user.getUserId(),
+            user.getUsername(),
+            user.getEmail(),
+            user.getPassword()
+        );
+        userPrincipal.setEnabled(user.getIsActive());
+        userPrincipal.addAuthority("ROLE_" + user.getUserRole().name());
+        return userPrincipal;
     }
 
     // Getters and Setters
