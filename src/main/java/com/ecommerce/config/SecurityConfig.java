@@ -83,11 +83,15 @@ public class SecurityConfig {
     /**
      * Configure HTTP Security
      * - CORS enabled
-     * - CSRF disabled (stateless JWT authentication)
+     * - CSRF disabled (safe for stateless JWT authentication - no cookies/sessions)
      * - Session management set to stateless
      * - JWT exception handling
      * - URL-based authorization rules
      * - JWT authentication filter added
+     *
+     * Note: CSRF protection is disabled because this API uses JWT tokens for authentication,
+     * which are not vulnerable to CSRF attacks. JWT tokens are stored in localStorage or
+     * sessionStorage (not cookies), and browsers do not automatically attach them to requests.
      *
      * @param http HttpSecurity object
      * @throws Exception if configuration fails
@@ -96,6 +100,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
             .cors(cors -> cors.configure(http))
+            // CSRF is disabled for stateless JWT authentication
             .csrf(csrf -> csrf.disable())
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint(jwtAuthenticationEntryPoint))
