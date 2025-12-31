@@ -104,21 +104,17 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
-        try {
-            Order.Status orderStatus = Order.Status.valueOf(status.toUpperCase());
-            order.setStatus(orderStatus);
+        Order.Status orderStatus = parseOrderStatus(status);
+        order.setStatus(orderStatus);
 
-            if (orderStatus == Order.Status.SHIPPED && order.getShippedAt() == null) {
-                order.setShippedAt(LocalDateTime.now());
-            } else if (orderStatus == Order.Status.DELIVERED && order.getDeliveredAt() == null) {
-                order.setDeliveredAt(LocalDateTime.now());
-            }
-
-            Order updatedOrder = orderRepository.save(order);
-            return convertToDTO(updatedOrder);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Invalid order status: " + status);
+        if (orderStatus == Order.Status.SHIPPED && order.getShippedAt() == null) {
+            order.setShippedAt(LocalDateTime.now());
+        } else if (orderStatus == Order.Status.DELIVERED && order.getDeliveredAt() == null) {
+            order.setDeliveredAt(LocalDateTime.now());
         }
+
+        Order updatedOrder = orderRepository.save(order);
+        return convertToDTO(updatedOrder);
     }
 
     @Override
@@ -126,14 +122,10 @@ public class OrderServiceImpl implements OrderService {
         Order order = orderRepository.findById(orderId)
                 .orElseThrow(() -> new ResourceNotFoundException("Order", "id", orderId));
 
-        try {
-            Order.PaymentStatus status = Order.PaymentStatus.valueOf(paymentStatus.toUpperCase());
-            order.setPaymentStatus(status);
-            Order updatedOrder = orderRepository.save(order);
-            return convertToDTO(updatedOrder);
-        } catch (IllegalArgumentException e) {
-            throw new BadRequestException("Invalid payment status: " + paymentStatus);
-        }
+        Order.PaymentStatus status = parsePaymentStatus(paymentStatus);
+        order.setPaymentStatus(status);
+        Order updatedOrder = orderRepository.save(order);
+        return convertToDTO(updatedOrder);
     }
 
     @Override
@@ -161,6 +153,30 @@ public class OrderServiceImpl implements OrderService {
     private String generateOrderNumber() {
         return "ORD-" + System.currentTimeMillis() + "-" + 
                UUID.randomUUID().toString().substring(0, 8).toUpperCase();
+    }
+
+    /**
+     * Parse order status string to enum, with proper error handling
+     */
+    private Order.Status parseOrderStatus(String status) {
+        try {
+            return Order.Status.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid order status: " + status + 
+                ". Valid values are: PENDING, CONFIRMED, PROCESSING, SHIPPED, DELIVERED, CANCELLED, RETURNED");
+        }
+    }
+
+    /**
+     * Parse payment status string to enum, with proper error handling
+     */
+    private Order.PaymentStatus parsePaymentStatus(String status) {
+        try {
+            return Order.PaymentStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid payment status: " + status + 
+                ". Valid values are: PENDING, COMPLETED, FAILED, REFUNDED, PARTIALLY_REFUNDED, CANCELLED");
+        }
     }
 
     private OrderDTO convertToDTO(Order order) {

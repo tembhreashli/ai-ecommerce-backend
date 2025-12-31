@@ -58,11 +58,12 @@ public final class Constants {
     public static final String PRODUCT_STATUS_DISCONTINUED = "DISCONTINUED";
 
     // Validation Messages
+    public static final int PASSWORD_MIN_LENGTH = 6;
     public static final String VALIDATION_USERNAME_REQUIRED = "Username is required";
     public static final String VALIDATION_EMAIL_REQUIRED = "Email is required";
     public static final String VALIDATION_PASSWORD_REQUIRED = "Password is required";
     public static final String VALIDATION_INVALID_EMAIL = "Email format is invalid";
-    public static final String VALIDATION_PASSWORD_MIN_LENGTH = "Password must be at least 6 characters";
+    public static final String VALIDATION_PASSWORD_MIN_LENGTH = "Password must be at least " + PASSWORD_MIN_LENGTH + " characters";
 
     // Error Messages
     public static final String ERROR_USER_NOT_FOUND = "User not found";

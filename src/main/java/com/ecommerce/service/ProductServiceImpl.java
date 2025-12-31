@@ -37,9 +37,7 @@ public class ProductServiceImpl implements ProductService {
                 .quantity(productDTO.getQuantity())
                 .categoryId(productDTO.getCategoryId())
                 .imageUrl(productDTO.getImageUrl())
-                .status(productDTO.getStatus() != null ? 
-                    Product.ProductStatus.valueOf(productDTO.getStatus()) : 
-                    Product.ProductStatus.ACTIVE)
+                .status(parseProductStatus(productDTO.getStatus()))
                 .rating(productDTO.getRating())
                 .reviewCount(productDTO.getReviewCount())
                 .isActive(productDTO.getIsActive() != null ? productDTO.getIsActive() : true)
@@ -107,7 +105,7 @@ public class ProductServiceImpl implements ProductService {
             product.setImageUrl(productDTO.getImageUrl());
         }
         if (productDTO.getStatus() != null) {
-            product.setStatus(Product.ProductStatus.valueOf(productDTO.getStatus()));
+            product.setStatus(parseProductStatus(productDTO.getStatus()));
         }
         if (productDTO.getIsActive() != null) {
             product.setIsActive(productDTO.getIsActive());
@@ -139,6 +137,21 @@ public class ProductServiceImpl implements ProductService {
                 keyword, keyword).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Parse product status string to enum, with proper error handling
+     */
+    private Product.ProductStatus parseProductStatus(String status) {
+        if (status == null) {
+            return Product.ProductStatus.ACTIVE;
+        }
+        try {
+            return Product.ProductStatus.valueOf(status.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new BadRequestException("Invalid product status: " + status + 
+                ". Valid values are: ACTIVE, INACTIVE, OUT_OF_STOCK, DISCONTINUED");
+        }
     }
 
     private ProductDTO convertToDTO(Product product) {

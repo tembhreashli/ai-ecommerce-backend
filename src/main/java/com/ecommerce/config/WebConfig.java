@@ -31,7 +31,6 @@ public class WebConfig implements WebMvcConfigurer {
     public void configureContentNegotiation(ContentNegotiationConfigurer configurer) {
         // Configure content negotiation
         configurer
-                .favorPathExtension(false)
                 .favorParameter(false)
                 .ignoreAcceptHeader(false)
                 .defaultContentType(org.springframework.http.MediaType.APPLICATION_JSON);

@@ -96,7 +96,7 @@ public class UserServiceImpl implements UserService {
             return userRepository.findById(userPrincipal.getId())
                     .orElseThrow(() -> new ResourceNotFoundException("User", "id", userPrincipal.getId()));
         }
-        throw new ResourceNotFoundException("Current user not found");
+        throw new ResourceNotFoundException("No authenticated user found in security context");
     }
 
     @Override
@@ -107,7 +107,7 @@ public class UserServiceImpl implements UserService {
             UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
             return userPrincipal.getId();
         }
-        throw new ResourceNotFoundException("Current user not found");
+        throw new ResourceNotFoundException("No authenticated user found in security context");
     }
 
     private UserDTO convertToDTO(User user) {
