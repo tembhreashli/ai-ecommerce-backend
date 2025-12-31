@@ -93,7 +93,7 @@ INSERT INTO order_items (order_id, product_id, quantity, price, discount) VALUES
 ((SELECT id FROM orders WHERE order_number = 'ORD-2024-00002' LIMIT 1),
  (SELECT id FROM products WHERE sku = 'MACBOOK-PRO-16-001' LIMIT 1), 1, 2499.99, 0),
 ((SELECT id FROM orders WHERE order_number = 'ORD-2024-00002' LIMIT 1),
- (SELECT id FROM products WHERE sku = 'MENS-DENIM-JEANS-001' LIMIT 1), 1, 59.99, 10.00);
+ (SELECT id FROM products WHERE sku = 'MENS-JEANS-001' LIMIT 1), 1, 59.99, 10.00);
 
 -- Display summary
 DO $$
