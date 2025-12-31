@@ -1,6 +1,6 @@
 package com.ecommerce.repository;
 
-import com.ecommerce.entity.Order;
+import com.ecommerce.model.Order;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -18,7 +18,15 @@ import java.util.Optional;
 public interface OrderRepository extends JpaRepository<Order, Long> {
 
     /**
-     * Find all orders by user ID
+     * Find all orders by customer ID
+     *
+     * @param customerId the customer ID
+     * @return list of orders for the customer
+     */
+    List<Order> findByCustomerId(Long customerId);
+
+    /**
+     * Find all orders by user ID (alias for customer ID)
      *
      * @param userId the user ID
      * @return list of orders for the user

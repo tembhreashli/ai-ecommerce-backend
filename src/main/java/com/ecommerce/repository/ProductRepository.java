@@ -167,4 +167,22 @@ public interface ProductRepository extends JpaRepository<Product, Long> {
      * @return true if the product exists, false otherwise
      */
     Boolean existsBySku(String sku);
+
+    /**
+     * Find all products by category ID.
+     *
+     * @param categoryId the category ID
+     * @return a list of products in the specified category
+     */
+    List<Product> findByCategoryId(Long categoryId);
+
+    /**
+     * Find products by name or description containing keywords (case insensitive).
+     *
+     * @param nameKeyword the keyword to search in name
+     * @param descriptionKeyword the keyword to search in description
+     * @return a list of products matching the search criteria
+     */
+    List<Product> findByNameContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+            String nameKeyword, String descriptionKeyword);
 }

@@ -4,19 +4,19 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
-import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
+import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
-import com.ecommerce.security.jwt.JwtAuthenticationEntryPoint;
-import com.ecommerce.security.jwt.JwtAuthenticationFilter;
+import com.ecommerce.security.JwtAuthenticationEntryPoint;
+import com.ecommerce.security.JwtAuthenticationFilter;
 
 /**
  * Spring Security Configuration Class
@@ -24,12 +24,12 @@ import com.ecommerce.security.jwt.JwtAuthenticationFilter;
  */
 @Configuration
 @EnableWebSecurity
-@EnableGlobalMethodSecurity(
+@EnableMethodSecurity(
     securedEnabled = true,
     jsr250Enabled = true,
     prePostEnabled = true
 )
-public class SecurityConfig extends WebSecurityConfigurerAdapter {
+public class SecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtAuthenticationEntryPoint jwtAuthenticationEntryPoint;
@@ -71,72 +71,64 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     /**
-     * Configure Authentication Manager
-     * @param auth AuthenticationManagerBuilder
-     * @throws Exception if configuration fails
-     */
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.authenticationProvider(authenticationProvider());
-    }
-
-    /**
      * Create Authentication Manager Bean
      * @return AuthenticationManager bean
      * @throws Exception if bean creation fails
      */
     @Bean
-    @Override
-    public AuthenticationManager authenticationManagerBean() throws Exception {
-        return super.authenticationManagerBean();
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authConfig) throws Exception {
+        return authConfig.getAuthenticationManager();
     }
 
     /**
      * Configure HTTP Security
      * - CORS enabled
-     * - CSRF disabled (stateless JWT authentication)
+     * - CSRF disabled (safe for stateless JWT authentication - no cookies/sessions)
      * - Session management set to stateless
      * - JWT exception handling
      * - URL-based authorization rules
      * - JWT authentication filter added
      *
+     * Note: CSRF protection is disabled because this API uses JWT tokens for authentication,
+     * which are not vulnerable to CSRF attacks. JWT tokens are stored in localStorage or
+     * sessionStorage (not cookies), and browsers do not automatically attach them to requests.
+     *
      * @param http HttpSecurity object
      * @throws Exception if configuration fails
      */
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
+    @Bean
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
-            .cors()
-                .and()
-            .csrf()
-                .disable()
-            .exceptionHandling()
-                .authenticationEntryPoint(jwtAuthenticationEntryPoint)
-                .and()
-            .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
-            .authorizeRequests()
-                .antMatchers("/", "/favicon.ico", "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js")
+            .cors(cors -> cors.configure(http))
+            // CSRF is disabled for stateless JWT authentication
+            .csrf(csrf -> csrf.disable())
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint(jwtAuthenticationEntryPoint))
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/", "/favicon.ico", "/**/*.png", "/**/*.gif", "/**/*.svg", "/**/*.jpg", "/**/*.html", "/**/*.css", "/**/*.js")
                     .permitAll()
-                .antMatchers("/api/auth/**")
+                .requestMatchers("/auth/**")
                     .permitAll()
-                .antMatchers("/api/public/**")
+                .requestMatchers("/public/**")
                     .permitAll()
-                .antMatchers("/api/products/search", "/api/products", "/api/products/{id}")
+                .requestMatchers("/products/search", "/products", "/products/{id}")
                     .permitAll()
-                .antMatchers("/api/categories/**")
+                .requestMatchers("/categories/**")
                     .permitAll()
-                .antMatchers("/api/admin/**")
+                .requestMatchers("/admin/**")
                     .hasRole("ADMIN")
-                .antMatchers("/api/user/**")
-                    .hasAnyRole("USER", "ADMIN")
-                .antMatchers("/api/orders/**")
-                    .hasAnyRole("USER", "ADMIN")
+                .requestMatchers("/user/**")
+                    .hasAnyRole("CUSTOMER", "ADMIN")
+                .requestMatchers("/orders/**")
+                    .hasAnyRole("CUSTOMER", "ADMIN")
                 .anyRequest()
-                    .authenticated();
+                    .authenticated());
 
         // Add JWT authentication filter
         http.addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+        
+        return http.build();
     }
 }
