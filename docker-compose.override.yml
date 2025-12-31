@@ -1,0 +1,21 @@
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile.backend
+      target: development
+    volumes:
+      # Mount source code for hot reload
+      - ./src:/app/src:ro
+      - ./pom.xml:/app/pom.xml:ro
+      # Maven cache
+      - ~/.m2:/root/.m2
+    environment:
+      # Enable debug mode
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      LOGGING_LEVEL_ROOT: DEBUG
+      LOGGING_LEVEL_COM_ECOMMERCE: DEBUG
+    ports:
+      # Add debug port
+      - "5005:5005"
+    command: ["mvn", "spring-boot:run", "-Dspring-boot.run.jvmArguments=-agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=*:5005"]
