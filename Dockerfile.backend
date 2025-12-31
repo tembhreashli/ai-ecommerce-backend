@@ -1,0 +1,62 @@
+# Multi-stage build for Spring Boot application
+
+# Stage 1: Build stage
+FROM maven:3.9-eclipse-temurin-17-alpine AS builder
+
+WORKDIR /app
+
+# Copy pom.xml and download dependencies (cached layer)
+COPY pom.xml .
+RUN mvn dependency:go-offline -B
+
+# Copy source code
+COPY src ./src
+
+# Build the application
+RUN mvn clean package -DskipTests -B
+
+# Stage 2: Development stage
+FROM eclipse-temurin:17-jdk-alpine AS development
+
+WORKDIR /app
+
+# Install Maven for development
+RUN apk add --no-cache maven curl
+
+# Copy pom.xml and source
+COPY pom.xml .
+COPY src ./src
+
+# Download dependencies
+RUN mvn dependency:go-offline -B
+
+EXPOSE 8080 5005
+
+CMD ["mvn", "spring-boot:run"]
+
+# Stage 3: Production stage
+FROM eclipse-temurin:17-jre-alpine AS production
+
+WORKDIR /app
+
+# Install curl for healthchecks
+RUN apk add --no-cache curl
+
+# Create a non-root user
+RUN addgroup -S spring && adduser -S spring -G spring
+
+# Copy the JAR from builder stage
+COPY --from=builder /app/target/*.jar app.jar
+
+# Change ownership
+RUN chown spring:spring app.jar
+
+# Switch to non-root user
+USER spring
+
+EXPOSE 8080
+
+# Set JVM options for containerized environment
+ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
+
+ENTRYPOINT ["sh", "-c", "java $JAVA_OPTS -jar app.jar"]
