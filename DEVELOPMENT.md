@@ -139,7 +139,7 @@ mvn clean package -DskipTests
 docker build -f Dockerfile.backend -t ai-ecommerce-backend .
 
 # Run Docker container
-docker run -p 8080:8080 ai-ecommerce-backend
+docker run -p 9090:9090 ai-ecommerce-backend
 ```
 
 ## Coding Standards

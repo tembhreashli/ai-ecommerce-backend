@@ -155,7 +155,7 @@ RABBITMQ_PASSWORD=guest
 RABBITMQ_VHOST=/
 
 # Application Configuration
-SERVER_PORT=8080
+SERVER_PORT=9090
 JWT_SECRET=your-secret-key-at-least-256-bits-long-for-production
 ```
 
@@ -182,7 +182,7 @@ spring:
     password: guest
 
 server:
-  port: 8080
+  port: 9090
 
 app:
   jwt:
@@ -225,10 +225,10 @@ java -jar target/ai-ecommerce-backend-1.0.0.jar
 
 ### 8. Verify Installation
 
-The application should start on port 8080. Verify by accessing:
+The application should start on port 9090. Verify by accessing:
 
-- **Health Check**: http://localhost:8080/api/actuator/health
-- **API Base**: http://localhost:8080/api
+- **Health Check**: http://localhost:9090/api/actuator/health
+- **API Base**: http://localhost:9090/api
 
 Expected health check response:
 ```json
@@ -244,7 +244,7 @@ Expected health check response:
 #### Register a New User
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/register \
+curl -X POST http://localhost:9090/api/auth/register \
   -H "Content-Type: application/json" \
   -d '{
     "username": "testuser",
@@ -258,7 +258,7 @@ curl -X POST http://localhost:8080/api/auth/register \
 #### Login
 
 ```bash
-curl -X POST http://localhost:8080/api/auth/login \
+curl -X POST http://localhost:9090/api/auth/login \
   -H "Content-Type: application/json" \
   -d '{
     "username": "john@example.com",
@@ -269,7 +269,7 @@ curl -X POST http://localhost:8080/api/auth/login \
 #### Get Products
 
 ```bash
-curl http://localhost:8080/api/products
+curl http://localhost:9090/api/products
 ```
 
 ### Test Credentials
@@ -397,12 +397,12 @@ EXIT
 
 ### Port Already in Use
 
-If port 8080 is already in use:
+If port 9090 is already in use:
 
 ```bash
-# Find process using port 8080
-lsof -i :8080  # Linux/Mac
-netstat -ano | findstr :8080  # Windows
+# Find process using port 9090
+lsof -i :9090  # Linux/Mac
+netstat -ano | findstr :9090  # Windows
 
 # Kill the process
 kill -9 <PID>  # Linux/Mac

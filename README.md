@@ -34,8 +34,8 @@ docker compose up -d
 ```
 
 Access the application:
-- **Backend API**: http://localhost:8080/api
-- **Health Check**: http://localhost:8080/api/actuator/health
+- **Backend API**: http://localhost:9090/api
+- **Health Check**: http://localhost:9090/api/actuator/health
 - **RabbitMQ Management**: http://localhost:15672 (guest/guest)
 
 ## Documentation
@@ -113,7 +113,7 @@ RABBITMQ_HOST=localhost
 RABBITMQ_PORT=5672
 
 # Application
-SERVER_PORT=8080
+SERVER_PORT=9090
 JWT_SECRET=your-secret-key
 ```
 

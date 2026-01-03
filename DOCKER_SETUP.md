@@ -58,8 +58,8 @@ The setup script will:
 
 Once all services are running:
 
-- **Backend API**: http://localhost:8080/api
-- **Health Check**: http://localhost:8080/api/actuator/health
+- **Backend API**: http://localhost:9090/api
+- **Health Check**: http://localhost:9090/api/actuator/health
 - **RabbitMQ Management**: http://localhost:15672 (guest/guest)
 - **PostgreSQL**: localhost:5432 (postgres/postgres)
 - **Redis**: localhost:6379
@@ -129,7 +129,7 @@ The application stack includes the following services:
 
 ### Backend Application
 - **Build**: Multi-stage Dockerfile
-- **Port**: 8080
+- **Port**: 9090
 - **Features**:
   - Depends on all infrastructure services
   - Health checks
@@ -159,7 +159,7 @@ RABBITMQ_PORT=5672
 RABBITMQ_MANAGEMENT_PORT=15672
 
 # Backend
-BACKEND_PORT=8080
+BACKEND_PORT=9090
 JWT_SECRET=your-secret-key-change-in-production
 SPRING_PROFILES_ACTIVE=docker
 ```
@@ -337,9 +337,9 @@ Open http://localhost:15672 in your browser and login with:
 
 1. Check if ports are already in use:
 ```bash
-# Check port 8080
-lsof -i :8080  # Linux/Mac
-netstat -ano | findstr :8080  # Windows
+# Check port 9090
+lsof -i :9090  # Linux/Mac
+netstat -ano | findstr :9090  # Windows
 
 # Check port 5432
 lsof -i :5432  # Linux/Mac
