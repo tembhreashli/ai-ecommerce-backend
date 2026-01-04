@@ -55,8 +55,8 @@ The AI E-Commerce backend is now fully functional with all core components imple
    ```
 
 4. **Access the application:**
-   - API Base URL: `http://localhost:8080/api`
-   - Health Check: `http://localhost:8080/api/actuator/health`
+   - API Base URL: `http://localhost:9090/api`
+   - Health Check: `http://localhost:9090/api/actuator/health`
    - RabbitMQ Management: `http://localhost:15672` (guest/guest)
 
 ### Local Development
@@ -139,7 +139,7 @@ The AI E-Commerce backend is now fully functional with all core components imple
 - `RABBITMQ_PASSWORD` - RabbitMQ password (default: guest)
 
 #### Application
-- `SERVER_PORT` - Server port (default: 8080)
+- `SERVER_PORT` - Server port (default: 9090)
 - `JWT_SECRET` - JWT secret key (required for production)
 - `SPRING_PROFILES_ACTIVE` - Active profile (docker/production)
 

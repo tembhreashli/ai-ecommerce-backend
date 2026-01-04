@@ -156,13 +156,13 @@ Write-Host ""
 Print-Success "All services are running!"
 Write-Host ""
 Write-Host "Service URLs:" -ForegroundColor White
-Write-Host "  🌐 Backend API:         http://localhost:8080/api"
+Write-Host "  🌐 Backend API:         http://localhost:9090/api"
 Write-Host "  🐰 RabbitMQ Management: http://localhost:15672 (guest/guest)"
 Write-Host "  🗄️  PostgreSQL:         localhost:5432 (postgres/postgres)"
 Write-Host "  🔴 Redis:               localhost:6379"
 Write-Host ""
 Write-Host "Health Check:" -ForegroundColor White
-Write-Host "  Backend:  http://localhost:8080/api/actuator/health"
+Write-Host "  Backend:  http://localhost:9090/api/actuator/health"
 Write-Host ""
 Write-Host "Useful Commands:" -ForegroundColor White
 Write-Host "  View logs:           docker compose logs -f [service-name]"

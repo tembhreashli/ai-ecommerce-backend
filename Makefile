@@ -108,13 +108,13 @@ rebuild:
 # Check service health
 health:
 	@echo "Checking service health..."
-	@curl -s http://localhost:8080/api/actuator/health | jq .
+	@curl -s http://localhost:9090/api/actuator/health | jq .
 
 # Show service URLs
 urls:
 	@echo "Service URLs:"
-	@echo "  Backend API:         http://localhost:8080/api"
-	@echo "  Backend Health:      http://localhost:8080/api/actuator/health"
+	@echo "  Backend API:         http://localhost:9090/api"
+	@echo "  Backend Health:      http://localhost:9090/api/actuator/health"
 	@echo "  RabbitMQ Management: http://localhost:15672 (guest/guest)"
 	@echo "  PostgreSQL:          localhost:5432 (postgres/postgres)"
 	@echo "  Redis:               localhost:6379"
