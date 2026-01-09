@@ -5,7 +5,7 @@ spring:
   # JPA Configuration for Docker
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: update
     properties:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
