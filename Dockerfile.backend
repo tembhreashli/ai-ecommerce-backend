@@ -20,8 +20,8 @@ FROM eclipse-temurin:17-jdk-alpine AS development
 
 WORKDIR /app
 
-# Install Maven for development
-RUN apk add --no-cache maven curl
+# Install Maven for development and postgresql-client for debugging
+RUN apk add --no-cache maven curl postgresql-client
 
 # Copy pom.xml and source
 COPY pom.xml .
@@ -39,8 +39,8 @@ FROM eclipse-temurin:17-jre-alpine AS production
 
 WORKDIR /app
 
-# Install curl for healthchecks
-RUN apk add --no-cache curl
+# Install curl for healthchecks and postgresql-client for debugging
+RUN apk add --no-cache curl postgresql-client
 
 # Create a non-root user
 RUN addgroup -S spring && adduser -S spring -G spring
